@@ -4,7 +4,8 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
-    "start": "parcel -p 2345 ./public/*.html"
+    "start": "parcel -p 2345 ./public/index.html",
+    "build": "parcel build --no-source-maps ./public/index.html --public-url ./" 
   },
   "author": "CASTO",
   "license": "MIT",
