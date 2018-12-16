@@ -1,0 +1,273 @@
+html, body {
+  height: 100%;
+  margin-left: 2em;
+  margin-right: 2em;
+}
+
+#btnReady::after {
+  content: "ready"
+}
+.connecting::after {
+  content: "connecting..." !important;
+}
+
+.connected::after {
+  content: "connected" !important;
+}
+
+/* scene selector */
+body>.container {
+  display: none;
+  height: 100%;
+}
+
+/* scene selector */
+body[data-scene=loading] {
+  display: none;
+}
+body[data-scene=setup]>.container#setup {
+  display: block;
+}
+
+body[data-scene=studio]>.container#studio {
+  display: block;
+}
+
+/* center aligner */
+.aligner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.alignerItem {
+}
+
+/* card */
+.card {
+  width: 20em;
+  height: 35em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.card>.title {
+  font-size: 1.5em;
+  margin-top: 1em;
+  max-width: 100%;
+}
+
+.card>.avatar {
+  margin-top: 1em;
+  width: 10em;
+  height: 10em;
+}
+
+.card>.avatar {
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.card>.thumbnails {
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+  margin-top: 3em;
+  justify-content: center;
+  margin-left: 1em;
+  margin-right: 1em;
+}
+
+.card>.thumbnails>dd {
+  width: 2em;
+  height: 2em;
+  outline: #eaeaea solid 1px;
+  margin: 0;
+}
+
+.card>.thumbnails>dd {
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+[data-id="01"] {
+  background-image: url("../images/avatar/01-mexican.svg");
+}
+[data-id="02"] {
+  background-image: url("../images/avatar/02-man.svg");
+}
+[data-id="03"] {
+  background-image: url("../images/avatar/02-man.svg");
+}
+
+[data-id="01"] {
+  background-image: url("../images/avatar/01-mexican.svg");
+}
+[data-id="02"] {
+  background-image: url("../images/avatar/02-man.svg");
+}
+[data-id="03"] {
+  background-image: url("../images/avatar/03-pirates.svg");
+}
+[data-id="04"] {
+  background-image: url("../images/avatar/04-girl.svg");
+}
+[data-id="05"] {
+  background-image: url("../images/avatar/05-boy.svg");
+}
+[data-id="06"] {
+  background-image: url("../images/avatar/06-chinese.svg");
+}
+[data-id="07"] {
+  background-image: url("../images/avatar/07-man.svg");
+}
+[data-id="08"] {
+  background-image: url("../images/avatar/08-police.svg");
+}
+[data-id="09"] {
+  background-image: url("../images/avatar/09-french.svg");
+}
+[data-id="10"] {
+  background-image: url("../images/avatar/10-girl.svg");
+}
+[data-id="11"] {
+  background-image: url("../images/avatar/11-girl.svg");
+}
+[data-id="12"] {
+  background-image: url("../images/avatar/12-arab.svg");
+}
+[data-id="13"] {
+  background-image: url("../images/avatar/13-rock.svg");
+}
+[data-id="14"] {
+  background-image: url("../images/avatar/14-boy.svg");
+}
+[data-id="15"] {
+  background-image: url("../images/avatar/15-chinese.svg");
+}
+[data-id="16"] {
+  background-image: url("../images/avatar/16-girl.svg");
+}
+[data-id="17"] {
+  background-image: url("../images/avatar/17-nun.svg");
+}
+[data-id="18"] {
+  background-image: url("../images/avatar/18-baby.svg");
+}
+[data-id="19"] {
+  background-image: url("../images/avatar/19-vietnam.svg");
+}
+[data-id="20"] {
+  background-image: url("../images/avatar/20-clown.svg");
+}
+[data-id="21"] {
+  background-image: url("../images/avatar/21-indian.svg");
+}
+[data-id="22"] {
+  background-image: url("../images/avatar/22-portuguese.svg");
+}
+[data-id="23"] {
+  background-image: url("../images/avatar/23-oldster.svg");
+}
+[data-id="24"] {
+  background-image: url("../images/avatar/24-girl.svg");
+}
+[data-id="25"] {
+  background-image: url("../images/avatar/25-armenian.svg");
+}
+[data-id="26"] {
+  background-image: url("../images/avatar/26-japan.svg");
+}
+[data-id="27"] {
+  background-image: url("../images/avatar/27-ninja.svg");
+}
+[data-id="28"] {
+  background-image: url("../images/avatar/28-soldier.svg");
+}
+[data-id="29"] {
+  background-image: url("../images/avatar/29-girl.svg");
+}
+[data-id="30"] {
+  background-image: url("../images/avatar/30-viking.svg");
+}
+[data-id="31"] {
+  background-image: url("../images/avatar/31-boy.svg");
+}
+[data-id="32"] {
+  background-image: url("../images/avatar/32-arab.svg");
+}
+[data-id="33"] {
+  background-image: url("../images/avatar/33-indian.svg");
+}
+[data-id="34"] {
+  background-image: url("../images/avatar/34-oldster.svg");
+}
+[data-id="35"] {
+  background-image: url("../images/avatar/35-armenian.svg");
+}
+[data-id="36"] {
+  background-image: url("../images/avatar/36-user.svg");
+}
+[data-id="37"] {
+  background-image: url("../images/avatar/37-dj.svg");
+}
+[data-id="38"] {
+  background-image: url("../images/avatar/38-girl.svg");
+}
+[data-id="39"] {
+  background-image: url("../images/avatar/39-girl.svg");
+}
+[data-id="40"] {
+  background-image: url("../images/avatar/40-safari.svg");
+}
+[data-id="41"] {
+  background-image: url("../images/avatar/41-cowboy.svg");
+}
+[data-id="42"] {
+  background-image: url("../images/avatar/42-boy.svg");
+}
+[data-id="43"] {
+  background-image: url("../images/avatar/43-santa clause.svg");
+}
+[data-id="44"] {
+  background-image: url("../images/avatar/44-native.svg");
+}
+[data-id="45"] {
+  background-image: url("../images/avatar/45-doctor.svg");
+}
+[data-id="46"] {
+  background-image: url("../images/avatar/46-russia.svg");
+}
+[data-id="47"] {
+  background-image: url("../images/avatar/47-scientist.svg");
+}
+[data-id="48"] {
+  background-image: url("../images/avatar/48-girl.svg");
+}
+[data-id="49"] {
+  background-image: url("../images/avatar/49-bellboy.svg");
+}
+[data-id="50"] {
+  background-image: url("../images/avatar/50-king.svg");
+}
+
+.container#setup .alignerItem>.card {
+  display: none;
+}
+
+.container#setup .alignerItem[data-scene="avatar"]>.card#avatar {
+  display: flex;
+}
+
+.container#setup .alignerItem[data-scene="name"]>.card#name {
+  display: flex;
+}
+.container#setup .alignerItem #userInfoForm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 1em;
+}

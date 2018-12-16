@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Streamer</title>
+	<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic">
+	<link rel="stylesheet" href="//cdn.rawgit.com/necolas/normalize.css/master/normalize.css">
+	<link rel="stylesheet" href="//cdn.rawgit.com/milligram/milligram/master/dist/milligram.min.css">
+	<link rel="stylesheet" href="./styles/common.css">
+</head>
+
+<body data-scene="loading">
+<div class="container" id="setup">
+	<div class="aligner">
+		<div class="alignerItem" data-scene="avatar">
+			<div class="card" id="avatar">
+				<div class="title">Choose your Avatar</div>
+				<div class="avatar" data-id="01"></div>
+				<dl class="thumbnails">
+					<dd data-id="01"></dd>
+					<dd data-id="02"></dd>
+					<dd data-id="03"></dd>
+					<dd data-id="04"></dd>
+					<dd data-id="05"></dd>
+					<dd data-id="06"></dd>
+					<dd data-id="07"></dd>
+					<dd data-id="08"></dd>
+					<dd data-id="09"></dd>
+					<dd data-id="10"></dd>
+					<dd data-id="11"></dd>
+					<dd data-id="12"></dd>
+					<dd data-id="13"></dd>
+					<dd data-id="14"></dd>
+					<dd data-id="15"></dd>
+					<dd data-id="16"></dd>
+					<dd data-id="17"></dd>
+					<dd data-id="18"></dd>
+					<dd data-id="19"></dd>
+					<dd data-id="20"></dd>
+					<dd data-id="21"></dd>
+					<dd data-id="22"></dd>
+					<dd data-id="23"></dd>
+					<dd data-id="24"></dd>
+					<dd data-id="25"></dd>
+					<dd data-id="26"></dd>
+					<dd data-id="27"></dd>
+					<dd data-id="28"></dd>
+					<dd data-id="29"></dd>
+					<dd data-id="30"></dd>
+					<dd data-id="31"></dd>
+					<dd data-id="32"></dd>
+					<dd data-id="33"></dd>
+					<dd data-id="34"></dd>
+					<dd data-id="35"></dd>
+					<dd data-id="36"></dd>
+					<dd data-id="37"></dd>
+					<dd data-id="38"></dd>
+					<dd data-id="39"></dd>
+					<dd data-id="40"></dd>
+					<dd data-id="41"></dd>
+					<dd data-id="42"></dd>
+					<dd data-id="43"></dd>
+					<dd data-id="44"></dd>
+					<dd data-id="45"></dd>
+					<dd data-id="46"></dd>
+					<dd data-id="47"></dd>
+					<dd data-id="48"></dd>
+					<dd data-id="49"></dd>
+					<dd data-id="50"></dd>
+				</dl>
+				<form id="userInfoForm">
+					<label for="nickName">Nickname</label>
+					<input id="nickName" type="text" placeholder="...and your nickname?">
+					<div class="btnNavigator">
+						<button type="submit" class="button next">next</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="container" id="studio">
+	<h1 class="head"><span id="streamerId"></span>'s Studio</h1>
+	<div class="row">
+		<div class="column">
+			<h3>
+				Streaming status
+			</h3>
+		</div>
+	</div>
+	<div class="row">
+		<div class="column">
+			<video id="studio_video" autoplay></video>
+		</div>
+	</div>
+	<form id="onAirForm">
+		<div class="row">
+			<div class="column">
+				<label for="title">Title</label>
+				<input type="text" id="title" placeholder="Title">
+			</div>
+		</div>
+		<div class="row">
+			<div class="column">
+				<button id="btnReady" class="button button-outline connecting" type="submit"></button>
+			</div>
+		</div>
+		<div class="row">
+			<div class="column">
+				<h3>
+					Current viewer counts:
+					<span id="viewerCounts">0</span>
+				</h3>
+			</div>
+		</div>
+	</form>
+</div>
+<script src="../src/index.js"></script>
+</body>
+</html>
