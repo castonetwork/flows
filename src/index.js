@@ -1,5 +1,5 @@
 import '@babel/polyfill'
-
+import adapter from "webrtc-adapter";
 const pull = require('pull-stream')
 const Catch = require('pull-catch')
 const CombineLatest = require('pull-combine-latest')

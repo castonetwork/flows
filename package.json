@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "start": "parcel -p 2345 ./public/index.html",
-    "build": "parcel build --no-source-maps ./public/index.html --public-url ./" 
+    "build": "parcel build --no-source-maps ./public/index.html --public-url ./"
   },
   "author": "CASTO",
   "license": "MIT",
@@ -28,7 +28,8 @@
     "pull-pushable": "^2.2.0",
     "pull-stream": "^3.6.9",
     "pull-stringify": "^2.0.0",
-    "setimmediate": "^1.0.5"
+    "setimmediate": "^1.0.5",
+    "webrtc-adapter": "^7.1.1"
   },
   "devDependencies": {
     "parcel": "^1.10.3"
