@@ -116,6 +116,10 @@ const initSetup = () => {
   }
 }
 
+var configuration = {
+  iceServers: [{urls: 'stun:stun.l.google.com:19302'}]
+};
+
 const initApp = async () => {
   console.log('init app')
   initSetup()
@@ -123,11 +127,11 @@ const initApp = async () => {
   const node = await createNode()
   console.log('node created')
   console.log('node is ready', node.peerInfo.id.toB58String())
-
-  node.handle('/streamer', (protocol, conn) => {
+  const onHandle = ({option}) => (protocol, conn) => {
     const sendStream = Pushable()
     /* peerConnection */
-    let pc = new RTCPeerConnection( {iceServers: [{urls: 'stun:stun.l.google.com:19302'}]});
+    console.log("protocol", protocol);
+    let pc = new RTCPeerConnection( { ...configuration, ...option } );
     // send any ice candidates to the other peer
     pc.onicecandidate = event => {
       console.log('[ICE]', event)
@@ -195,7 +199,10 @@ const initApp = async () => {
               audio: true,
               video: true,
             })
-            stream.getTracks().forEach(track => pc.addTrack(track, stream))
+            // stream.getTracks().forEach(track => pc.addTrack(track, stream))
+            pc.addStream(stream);
+            pc.getTransceivers().forEach(o => o.direction = 'sendonly')
+
             document.getElementById('studio_video').srcObject = stream
             try {
               await pc.setLocalDescription(await pc.createOffer())
@@ -214,7 +221,9 @@ const initApp = async () => {
       }),
     )
     networkReadyNotify(true)
-  })
+  };
+  node.handle('/streamer/unified-plan', onHandle({sdpSemantics: 'unified-plan'}));
+  node.handle('/streamer', onHandle({}));
   node.on('peer:connect', peerInfo => {
     console.log('peer connected:', peerInfo.id.toB58String())
 
