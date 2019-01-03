@@ -116,7 +116,7 @@ const initSetup = () => {
   }
 }
 
-var configuration = {
+const configuration = {
   iceServers: [{urls: 'stun:stun.l.google.com:19302'}]
 };
 
@@ -137,7 +137,7 @@ const initApp = async () => {
       console.log('[ICE]', event)
       if (event.candidate) {
         sendStream.push({
-          request: 'sendTrickleCandidate',
+          topic: 'sendTrickleCandidate',
           candidate: event.candidate,
         })
       }
@@ -146,16 +146,14 @@ const initApp = async () => {
       console.log('[ICE STATUS] ', pc.iceConnectionState)
       if (pc.iceConnectionState === 'connected') {
         sendStream.push({
-          request: 'updateStreamerInfo',
+          topic: 'updateStreamerInfo',
           profile: JSON.parse(localStorage.getItem('profile')),
           title: document.getElementById('title').value,
         })
-        setInterval(x => {
-          sendStream.push({
-            request: "updateStreamerSnapshot",
-            snapshot: getSnapshot()
-          })
-        }, 500);
+        sendStream.push({
+          topic: "updateStreamerSnapshot",
+          snapshot: getSnapshot()
+        })
       }
     }
 
@@ -172,19 +170,23 @@ const initApp = async () => {
       pull.map(o => window.JSON.parse(o.toString())),
       pull.drain(o => {
         const controllerResponse = {
-          answer: async desc => {
-            console.log('controller answered', desc)
-            await pc.setRemoteDescription(desc)
+          "sendCreatedAnswer": async ({sdp}) => {
+            console.log('controller answered', sdp)
+            await pc.setRemoteDescription(sdp)
+          },
+          "sendTrickleCandidate": ({ice})=> {
+            console.log("received iceCandidate");
+            pc.addIceCandidate(ice);
           },
           requestStreamerInfo: ({peerId}) => {
             sendStream.push({
-              request: 'updateStreamerInfo',
+              topic: 'updateStreamerInfo',
               idStr: peerId,
               profile: JSON.parse(localStorage.getItem('profile')),
             })
           },
         }
-        controllerResponse[o.type] && controllerResponse[o.type](o)
+        controllerResponse[o.topic] && controllerResponse[o.topic](o)
       }),
     )
     /* build a createOfferStream */
@@ -208,7 +210,7 @@ const initApp = async () => {
               await pc.setLocalDescription(await pc.createOffer())
               console.log('localDescription', pc.localDescription)
               sendStream.push({
-                request: 'sendCreateOffer',
+                topic: 'sendCreateOffer',
                 jsep: pc.localDescription,
               })
             } catch (err) {
@@ -230,6 +232,7 @@ const initApp = async () => {
   })
   node.on('peer:disconnect', peerInfo => {
     console.log('peer disconnected:', peerInfo.id.toB58String())
+    networkReadyNotify(false)
   })
   node.start(err => {
     if (err) {
