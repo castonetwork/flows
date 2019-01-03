@@ -175,7 +175,7 @@ const initApp = async () => {
             await pc.setRemoteDescription(sdp)
           },
           "sendTrickleCandidate": ({ice})=> {
-            console.log("received iceCandidate");
+            console.log("received iceCandidate", ice);
             pc.addIceCandidate(ice);
           },
           requestStreamerInfo: ({peerId}) => {
@@ -211,7 +211,7 @@ const initApp = async () => {
               console.log('localDescription', pc.localDescription)
               sendStream.push({
                 topic: 'sendCreateOffer',
-                jsep: pc.localDescription,
+                sdp: pc.localDescription,
               })
             } catch (err) {
               console.error(err)
