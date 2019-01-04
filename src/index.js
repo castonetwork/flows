@@ -127,7 +127,7 @@ const initApp = async () => {
   const node = await createNode()
   console.log('node created')
   console.log('node is ready', node.peerInfo.id.toB58String())
-  const onHandle = ({option}) => (protocol, conn) => {
+  const onHandle = option => (protocol, conn) => {
     const sendStream = Pushable()
     /* peerConnection */
     console.log("protocol", protocol);
@@ -224,7 +224,7 @@ const initApp = async () => {
     )
     networkReadyNotify(true)
   };
-  node.handle('/streamer/unified-plan', onHandle({option: {sdpSemantics: 'unified-plan'}}));
+  node.handle('/streamer/unified-plan', onHandle({sdpSemantics: 'unified-plan'}));
   node.handle('/streamer', onHandle({}));
   node.on('peer:connect', peerInfo => {
     console.log('peer connected:', peerInfo.id.toB58String())
