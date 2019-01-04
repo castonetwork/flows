@@ -224,7 +224,7 @@ const initApp = async () => {
     )
     networkReadyNotify(true)
   };
-  node.handle('/streamer/unified-plan', onHandle({sdpSemantics: 'unified-plan'}));
+  node.handle('/streamer/unified-plan', onHandle({option: {sdpSemantics: 'unified-plan'}}));
   node.handle('/streamer', onHandle({}));
   node.on('peer:connect', peerInfo => {
     console.log('peer connected:', peerInfo.id.toB58String())
