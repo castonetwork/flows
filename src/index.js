@@ -127,6 +127,7 @@ const initApp = async () => {
   const node = await createNode()
   console.log('node created')
   console.log('node is ready', node.peerInfo.id.toB58String())
+  let isHandled = false;
   const onHandle = option => (protocol, conn) => {
     const sendStream = Pushable()
     /* peerConnection */
@@ -182,6 +183,7 @@ const initApp = async () => {
             sendStream.push({
               topic: 'updateStreamerInfo',
               idStr: peerId,
+              isHandled,
               profile: JSON.parse(localStorage.getItem('profile')),
             })
           },
@@ -222,7 +224,14 @@ const initApp = async () => {
         }
       }),
     )
-    networkReadyNotify(true)
+    if (isHandled) {
+      sendStream({
+      topic: "dialTerminate",
+      idStr: node.peerInfo.id.toB58String()
+    })} else {
+      networkReadyNotify(true);
+      isHandled = true;
+    }
   };
   node.handle('/streamer/unified-plan', onHandle({sdpSemantics: 'unified-plan'}));
   node.handle('/streamer', onHandle({}));
