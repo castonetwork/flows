@@ -249,7 +249,9 @@ const initApp = async () => {
   })
   node.on('peer:disconnect', peerInfo => {
     console.log('peer disconnected:', peerInfo.id.toB58String())
-    networkReadyNotify(false)
+    if (peerInfo.id.toB58String()===connectedPrismPeerId) {
+      networkReadyNotify(false);
+    }
   })
   node.start(err => {
     if (err) {
