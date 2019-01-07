@@ -127,11 +127,10 @@ const initApp = async () => {
   const node = await createNode()
   console.log('node created')
   console.log('node is ready', node.peerInfo.id.toB58String())
-  let isHandled = false;
+  let connectedPrismPeerId = null;
   const onHandle = option => (protocol, conn) => {
     const sendStream = Pushable()
     /* peerConnection */
-    console.log("protocol", protocol);
     let pc = new RTCPeerConnection( { ...configuration, ...option } );
     // send any ice candidates to the other peer
     pc.onicecandidate = event => {
@@ -161,7 +160,7 @@ const initApp = async () => {
     // let the "negotiationneeded" event trigger offer generation
     pc.onnegotiationneeded = () => {
     }
-    console.log('dialed!!', protocol, conn)
+
     pull(sendStream,
       pull.map(o => JSON.stringify(o)),
       conn,
@@ -179,15 +178,32 @@ const initApp = async () => {
             console.log("received iceCandidate", ice);
             pc.addIceCandidate(ice);
           },
-          requestStreamerInfo: ({peerId}) => {
-            sendStream.push({
-              topic: 'updateStreamerInfo',
-              idStr: peerId,
-              isHandled,
-              profile: JSON.parse(localStorage.getItem('profile')),
-            })
+          "requestStreamerInfo": ({peerId}) => {
+            if(connectedPrismPeerId){
+              sendStream.push({
+                topic: "deniedStreamInfo",
+
+              });
+              //TODO: pull.end
+              sendStream.end();
+            }else{// isNull
+              connectedPrismPeerId = peerId;
+              sendStream.push({
+                topic: "setupStreamInfo",
+              });
+            }
+            //topic: 'setUpStreamInfo'
           },
-        }
+          'deniedSetupStreamInfo': ()=>{
+            connectedPrismPeerId = null;
+            //TODO: pull.end
+            sendStream.end();
+          },
+          'readyToCast': ()=>{
+            networkReadyNotify(true);
+            console.log("connectedPrismPeerId : ", connectedPrismPeerId);
+          }
+        };
         controllerResponse[o.topic] && controllerResponse[o.topic](o)
       }),
     )
@@ -202,7 +218,7 @@ const initApp = async () => {
             const stream = await navigator.mediaDevices.getUserMedia({
               audio: true,
               video: true,
-            })
+            });
             // stream.getTracks().forEach(track => pc.addTrack(track, stream))
             pc.addStream(stream);
             pc.getTransceivers().forEach(o => o.direction = 'sendonly')
@@ -224,15 +240,6 @@ const initApp = async () => {
         }
       }),
     )
-    if (isHandled) {
-      console.log("topic: dialTerminate is sent");
-      sendStream.push({
-      topic: "dialTerminate",
-      idStr: node.peerInfo.id.toB58String()
-    })} else {
-      networkReadyNotify(true);
-      isHandled = true;
-    }
   };
   node.handle('/streamer/unified-plan', onHandle({sdpSemantics: 'unified-plan'}));
   node.handle('/streamer', onHandle({}));
