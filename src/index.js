@@ -225,7 +225,8 @@ const initApp = async () => {
       }),
     )
     if (isHandled) {
-      sendStream({
+      console.log("topic: dialTerminate is sent");
+      sendStream.push({
       topic: "dialTerminate",
       idStr: node.peerInfo.id.toB58String()
     })} else {
