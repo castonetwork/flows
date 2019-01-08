@@ -83,41 +83,25 @@
 </div>
 <div class="container" id="studio">
 	<div class="head"><span id="streamerId"></span>'s Studio</div>
-	<div class="row">
-		<div class="column">
-			<h3>
-				Streaming status
-			</h3>
-			<div id="myPeerId"></div>
-			<div id="currentPrismPeerId"></div>
+	<div class="status">
+		<div>
+			Streaming status
 		</div>
+		<div id="myPeerId"></div>
+		<div id="currentPrismPeerId"></div>
 	</div>
-	<div class="row">
-		<div class="column">
-			<video id="studio_video" autoplay></video>
-		</div>
+	<div class="videoContainer">
+		<video id="studio_video" autoplay></video>
 	</div>
-	<form id="onAirForm">
-		<div class="row">
-			<div class="column">
-				<label for="title">Title</label>
-				<input type="text" id="title" placeholder="Title">
-			</div>
-		</div>
-		<div class="row">
-			<div class="column">
-				<button id="btnReady" class="button button-outline connecting" type="submit"></button>
-			</div>
-		</div>
-		<div class="row">
-			<div class="column">
-				<h3>
-					Current viewer counts:
-					<span id="viewerCounts">0</span>
-				</h3>
-			</div>
-		</div>
-	</form>
+	<div id="flowInfo">
+		<form id="onAirForm">
+			<input type="text" id="title" placeholder="Wait for the peer connections" disabled="true">
+		</form>
+	</div>
+	<div id="viewerInfo">
+		viewers:
+		<span id="viewerCounts">0</span>
+	</div>
 </div>
 <script src="../src/index.js"></script>
 </body>

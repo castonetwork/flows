@@ -8,26 +8,28 @@ const Notify = require('pull-notify')
 const createNode = require('./create-node')
 
 /* UI Stream */
-const onAirFormStream = Notify()//Pushable()
-
+const onAirFormStream = Notify()
+onAirFormStream(false);
 /* Network Stream */
 const networkReadyNotify = Notify()
+networkReadyNotify(false);
 
 /* watch network Ready Status */
+const titleElement = document.getElementById('title');
 pull(
   networkReadyNotify.listen(),
   pull.filter(o => o),
   pull.drain(() => {
-    document.getElementById('btnReady').classList.remove('connecting')
-    document.getElementById('btnReady').classList.remove('button-outline')
+    titleElement.setAttribute('placeholder', 'Your channel name here');
+    titleElement.removeAttribute('disabled');
   }),
 )
 pull(
   networkReadyNotify.listen(),
   pull.filter(o => !o),
   pull.drain(() => {
-    document.getElementById('btnReady').classList.add('connecting')
-    document.getElementById('btnReady').classList.add('button-outline')
+    titleElement.setAttribute('placeholder', 'Wait for the peer connections');
+    titleElement.setAttribute('disabled', true);
   }),
 )
 
@@ -49,7 +51,7 @@ const onAirFormSubmit = e => {
   if (!titleDOM.value) {
     alert('please enter a title of stream')
   } else {
-    onAirFormStream(e);
+    onAirFormStream(true);
     titleDOM.setAttribute('disabled', true)
   }
   
@@ -129,39 +131,39 @@ const initApp = async () => {
   console.log('node is ready', node.peerInfo.id.toB58String())
   document.getElementById("myPeerId").textContent = `my Peer Id : ${node.peerInfo.id.toB58String()}`
   let connectedPrismPeerId = null;
+  const sendStream = Pushable();
+  /* peerConnection */
+  const options = {sdpSemantics: 'unified-plan'};
+  let pc = new RTCPeerConnection( { ...configuration, ...options } );
+  // send any ice candidates to the other peer
+  pc.onicecandidate = event => {
+    console.log('[ICE]', event)
+    if (event.candidate) {
+      sendStream.push({
+        topic: 'sendTrickleCandidate',
+        candidate: event.candidate,
+      })
+    }
+  }
+  pc.oniceconnectionstatechange = () => {
+    console.log('[ICE STATUS] ', pc.iceConnectionState)
+    if (pc.iceConnectionState === 'connected') {
+      sendStream.push({
+        topic: 'updateStreamerInfo',
+        profile: JSON.parse(localStorage.getItem('profile')),
+        title: document.getElementById('title').value,
+      })
+      sendStream.push({
+        topic: "updateStreamerSnapshot",
+        snapshot: getSnapshot()
+      })
+    }
+  }
+
+  // let the "negotiationneeded" event trigger offer generation
+  pc.onnegotiationneeded = () => {
+  }
   const onHandle = option => (protocol, conn) => {
-    const sendStream = Pushable()
-    /* peerConnection */
-    let pc = new RTCPeerConnection( { ...configuration, ...option } );
-    // send any ice candidates to the other peer
-    pc.onicecandidate = event => {
-      console.log('[ICE]', event)
-      if (event.candidate) {
-        sendStream.push({
-          topic: 'sendTrickleCandidate',
-          candidate: event.candidate,
-        })
-      }
-    }
-    pc.oniceconnectionstatechange = () => {
-      console.log('[ICE STATUS] ', pc.iceConnectionState)
-      if (pc.iceConnectionState === 'connected') {
-        sendStream.push({
-          topic: 'updateStreamerInfo',
-          profile: JSON.parse(localStorage.getItem('profile')),
-          title: document.getElementById('title').value,
-        })
-        sendStream.push({
-          topic: "updateStreamerSnapshot",
-          snapshot: getSnapshot()
-        })
-      }
-    }
-
-    // let the "negotiationneeded" event trigger offer generation
-    pc.onnegotiationneeded = () => {
-    }
-
     pull(sendStream,
       pull.map(o => JSON.stringify(o)),
       conn,
@@ -238,8 +240,8 @@ const initApp = async () => {
       }),
     )
   };
-  node.handle('/streamer/unified-plan', onHandle({sdpSemantics: 'unified-plan'}));
-  node.handle('/streamer', onHandle({}));
+  node.handle('/streamer/unified-plan', onHandle());
+  // node.handle('/streamer', onHandle({}));
   node.on('peer:connect', peerInfo => {
     // console.log('peer connected:', peerInfo.id.toB58String())
 
