@@ -8,7 +8,7 @@ const Notify = require('pull-notify')
 const createNode = require('./create-node')
 
 /* UI Stream */
-const onAirFormStream = Pushable()
+const onAirFormStream = Notify()//Pushable()
 
 /* Network Stream */
 const networkReadyNotify = Notify()
@@ -49,7 +49,7 @@ const onAirFormSubmit = e => {
   if (!titleDOM.value) {
     alert('please enter a title of stream')
   } else {
-    onAirFormStream.push(e)
+    onAirFormStream(e);
     titleDOM.setAttribute('disabled', true)
   }
   
@@ -165,9 +165,6 @@ const initApp = async () => {
     pull(sendStream,
       pull.map(o => JSON.stringify(o)),
       conn,
-      Catch(function onErr(err) {
-        console.log(err.message, 'test', 'should callback with error')
-      }),
       pull.map(o => window.JSON.parse(o.toString())),
       pull.drain(o => {
         const controllerResponse = {
@@ -183,7 +180,6 @@ const initApp = async () => {
             if(connectedPrismPeerId){
               sendStream.push({
                 topic: "deniedStreamInfo",
-
               });
               //TODO: pull.end
               sendStream.end();
@@ -193,7 +189,6 @@ const initApp = async () => {
                 topic: "setupStreamInfo",
               });
             }
-            //topic: 'setUpStreamInfo'
           },
           'deniedSetupStreamInfo': ()=>{
             connectedPrismPeerId = null;
@@ -211,7 +206,7 @@ const initApp = async () => {
     )
     /* build a createOfferStream */
     pull(
-      CombineLatest([onAirFormStream, networkReadyNotify.listen()]),
+       CombineLatest([onAirFormStream.listen(), networkReadyNotify.listen()]),
       pull.drain(async o => {
         console.log('combineLatest', o)
         if (o[1]) {
@@ -246,7 +241,7 @@ const initApp = async () => {
   node.handle('/streamer/unified-plan', onHandle({sdpSemantics: 'unified-plan'}));
   node.handle('/streamer', onHandle({}));
   node.on('peer:connect', peerInfo => {
-    console.log('peer connected:', peerInfo.id.toB58String())
+    // console.log('peer connected:', peerInfo.id.toB58String())
 
   })
   node.on('peer:disconnect', peerInfo => {
