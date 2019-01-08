@@ -127,6 +127,7 @@ const initApp = async () => {
   const node = await createNode()
   console.log('node created')
   console.log('node is ready', node.peerInfo.id.toB58String())
+  document.getElementById("myPeerId").textContent = `my Peer Id : ${node.peerInfo.id.toB58String()}`
   let connectedPrismPeerId = null;
   const onHandle = option => (protocol, conn) => {
     const sendStream = Pushable()
@@ -202,6 +203,7 @@ const initApp = async () => {
           'readyToCast': ()=>{
             networkReadyNotify(true);
             console.log("connectedPrismPeerId : ", connectedPrismPeerId);
+            document.getElementById("currentPrismPeerId").textContent = `currentPrismPeerId : ${connectedPrismPeerId}`
           }
         };
         controllerResponse[o.topic] && controllerResponse[o.topic](o)
