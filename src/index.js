@@ -15,21 +15,11 @@ const networkReadyNotify = Notify()
 networkReadyNotify(false);
 
 /* watch network Ready Status */
-const titleElement = document.getElementById('title');
+const onAirFormElement = document.getElementById('onAirForm');
 pull(
   networkReadyNotify.listen(),
-  pull.filter(o => o),
-  pull.drain(() => {
-    titleElement.setAttribute('placeholder', 'Your channel name here');
-    titleElement.removeAttribute('disabled');
-  }),
-)
-pull(
-  networkReadyNotify.listen(),
-  pull.filter(o => !o),
-  pull.drain(() => {
-    titleElement.setAttribute('placeholder', 'Wait for the peer connections');
-    titleElement.setAttribute('disabled', true);
+  pull.drain(networkStatus => {
+    onAirFormElement.setAttribute('data-status', networkStatus && 'connected' || 'connecting');
   }),
 )
 

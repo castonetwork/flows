@@ -3,6 +3,9 @@ html, body {
   margin: 0;
   padding: 0;
 }
+.container {
+  max-width: 100%;
+}
 
 #btnReady::after {
   content: "ready"
@@ -131,11 +134,13 @@ body[data-scene=studio]>.container#studio {
 #studio>.videoContainer>video {
   height: 100%;
   width: 100%;
+  object-fit: cover;
 }
 form {
   width: 100%;
+  display: flex;
+  align-items: center;
 }
-
 #flowInfo {
   position: absolute;
   top: 0;
@@ -147,12 +152,27 @@ form {
   justify-content: center;
 }
 
-#title {
+#onAirForm[data-status="connecting"]>input#title,  #onAirForm[data-status="connected"]>span.title {
+  display: none;
+}
+
+#onAirForm[data-status="connected"]>input#title, #onAirForm[data-status="connected"]>span.title {
+  -webkit-animation-name: titleKeyAnimation;
+  animation-name: fadeIn;
+  -webkit-animation-duration: 1s;
+  animation-duration: 1s;
+}
+span.title {
+  height: 2em;
+}
+input#title {
+  height: 1em;
+}
+span.title, input#title {
   border: 0;
   text-align: center;
   font-size: 3em;
   opacity: 0.4;
   word-break: break-word;
-  height: 1em;
   width: 100%;
 }

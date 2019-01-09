@@ -9,6 +9,7 @@
 	<link rel="stylesheet" href="//cdn.rawgit.com/milligram/milligram/master/dist/milligram.min.css">
 	<link rel="stylesheet" href="./styles/avatars.css">
 	<link rel="stylesheet" href="./styles/common.css">
+	<link rel="stylesheet" href="./styles/animation.css">
 	<link rel="shortcut icon" href="images/favicon.png" type="image/png">
 </head>
 <body data-scene="loading">
@@ -94,8 +95,9 @@
 		<video id="studio_video" autoplay></video>
 	</div>
 	<div id="flowInfo">
-		<form id="onAirForm">
-			<input type="text" id="title" placeholder="Wait for the peer connections" disabled="true">
+		<form id="onAirForm" data-status="connecting">
+      <span class="title anim-text-flow"><span>Wait</span> <span>for</span> <span>the</span> <span>peer</span> <span>conn</span><span>ecti</span><span>ons</span></span>
+			<input type="text" id="title" placeholder="Your channel name here">
 		</form>
 	</div>
 	<div id="viewerInfo">
