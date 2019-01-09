@@ -14,6 +14,7 @@ onAirFormStream(false);
 const networkReadyNotify = Notify()
 networkReadyNotify(false);
 
+let serviceId;
 /* watch network Ready Status */
 const onAirFormElement = document.getElementById('onAirForm');
 pull(
@@ -119,9 +120,11 @@ const initApp = async () => {
   const node = await createNode()
   console.log('node created')
   console.log('node is ready', node.peerInfo.id.toB58String())
+
+  serviceId = new URL(location.href).searchParams.get('serviceId');
+
   document.getElementById("myPeerId").textContent = `my Peer Id : ${node.peerInfo.id.toB58String()}`
   let connectedPrismPeerId = null;
-
   /* peerConnection */
   const options = {sdpSemantics: 'unified-plan'};
 
@@ -233,7 +236,7 @@ const initApp = async () => {
       }),
     )
   };
-  node.handle('/streamer/unified-plan', onHandle());
+  node.handle(`/streamer/${serviceId}/unified-plan`, onHandle());
   // node.handle('/streamer', onHandle({}));
   node.on('peer:connect', peerInfo => {
     // console.log('peer connected:', peerInfo.id.toB58String())
