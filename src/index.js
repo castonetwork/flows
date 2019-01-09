@@ -121,39 +121,13 @@ const initApp = async () => {
   console.log('node is ready', node.peerInfo.id.toB58String())
   document.getElementById("myPeerId").textContent = `my Peer Id : ${node.peerInfo.id.toB58String()}`
   let connectedPrismPeerId = null;
-  const sendStream = Pushable();
+
   /* peerConnection */
   const options = {sdpSemantics: 'unified-plan'};
-  let pc = new RTCPeerConnection( { ...configuration, ...options } );
-  // send any ice candidates to the other peer
-  pc.onicecandidate = event => {
-    console.log('[ICE]', event)
-    if (event.candidate) {
-      sendStream.push({
-        topic: 'sendTrickleCandidate',
-        candidate: event.candidate,
-      })
-    }
-  }
-  pc.oniceconnectionstatechange = () => {
-    console.log('[ICE STATUS] ', pc.iceConnectionState)
-    if (pc.iceConnectionState === 'connected') {
-      sendStream.push({
-        topic: 'updateStreamerInfo',
-        profile: JSON.parse(localStorage.getItem('profile')),
-        title: document.getElementById('title').value,
-      })
-      sendStream.push({
-        topic: "updateStreamerSnapshot",
-        snapshot: getSnapshot()
-      })
-    }
-  }
 
-  // let the "negotiationneeded" event trigger offer generation
-  pc.onnegotiationneeded = () => {
-  }
+  let pc;
   const onHandle = option => (protocol, conn) => {
+    let sendStream = Pushable();
     pull(sendStream,
       pull.map(o => JSON.stringify(o)),
       conn,
@@ -203,6 +177,35 @@ const initApp = async () => {
         console.log('combineLatest', o)
         if (o[1]) {
           try {
+            pc = new RTCPeerConnection( { ...configuration, ...options } );
+            // send any ice candidates to the other peer
+            pc.onicecandidate = event => {
+              console.log('[ICE]', event)
+              if (event.candidate) {
+                sendStream.push({
+                  topic: 'sendTrickleCandidate',
+                  candidate: event.candidate,
+                })
+              }
+            }
+            pc.oniceconnectionstatechange = () => {
+              console.log('[ICE STATUS] ', pc.iceConnectionState)
+              if (pc.iceConnectionState === 'connected') {
+                sendStream.push({
+                  topic: 'updateStreamerInfo',
+                  profile: JSON.parse(localStorage.getItem('profile')),
+                  title: document.getElementById('title').value,
+                })
+                sendStream.push({
+                  topic: "updateStreamerSnapshot",
+                  snapshot: getSnapshot()
+                })
+              }
+            }
+
+            // let the "negotiationneeded" event trigger offer generation
+            pc.onnegotiationneeded = () => {
+            }
             // get a local stream, show it in a self-view and add it to be sent
             const stream = await navigator.mediaDevices.getUserMedia({
               audio: true,
