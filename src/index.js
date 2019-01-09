@@ -28,10 +28,10 @@ pull(
 const getSnapshot = ()=>{
   let canvas = document.createElement("canvas");
   let video = document.getElementById("studio_video");
-  canvas.width = video.offsetWidth / 4;
-  canvas.height = video.offsetHeight / 4;
+  canvas.width = video.videoWidth / 4;
+  canvas.height = video.videoHeight / 4;
   let ctx = canvas.getContext('2d');
-  ctx.drawImage(video, 0,0, video.offsetWidth, video.offsetHeight, 0,0, canvas.width, canvas.height);
+  ctx.drawImage(video, 0,0, video.videoWidth, video.videoHeight, 0,0, canvas.width, canvas.height);
   return canvas.toDataURL();
 }
 
