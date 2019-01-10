@@ -214,26 +214,25 @@ const initApp = async () => {
               audio: true,
               video: true,
             });
-            // stream.getTracks().forEach(track => pc.addTrack(track, stream))
-            pc.addStream(stream);
-            pc.getTransceivers().forEach(o => o.direction = 'sendonly')
+            stream.getTracks().forEach(track => pc.addTransceiver(track, {direction: 'sendonly'}));
 
             document.getElementById('studio_video').srcObject = stream
             try {
               let offer = await pc.createOffer();
               const codecToFirst = (sdp, codec)=> {
-                const reg=/a=rtpmap:(\d+) (.*)\//;
+                const regCodecs = /a=rtpmap:(\d+) (.*)\//;
+                const regVideos = /(m=video.*[A-Z\/]+ )([0-9 ]+)/;
                 const h264ids = sdp.match(/a=rtpmap:(\d+) (.*)\//g)
-                  .map(o=>o.match(reg).splice(1,2))
-                  .filter(o=>o[1]===codec)
-                  .map(o=>o[0]);
-                return sdp.replace(/(m=video.*[A-Z\/]+ )([0-9 ]+)/,
-                  '$1'+sdp.match(/m=video.*[A-Z\/]+ ([0-9 ]+)/)[1].split(' ')
-                    .reduce((p,n)=>h264ids.some(h=>h===n) ? [n].concat(p) : p.concat(n), [])
+                  .map(o => o.match(regCodecs).splice(1, 2))
+                  .filter(o => o[1] === codec)
+                  .map(o => o[0]);
+                return sdp.replace(regVideos,
+                  '$1' + sdp.match(regVideos)[2].split(' ')
+                    .reduce((p, n) => h264ids.some(h => h === n) ? [n].concat(p) : p.concat(n), [])
                     .join(" ")
                 );
               };
-              offer.sdp = codecToFirst(offer.sdp, "H264");
+              // offer.sdp = codecToFirst(offer.sdp, "H264");
               await pc.setLocalDescription(offer);
               console.log('localDescription', pc.localDescription)
               sendStream.push({
