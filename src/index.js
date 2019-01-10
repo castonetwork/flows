@@ -220,7 +220,21 @@ const initApp = async () => {
 
             document.getElementById('studio_video').srcObject = stream
             try {
-              await pc.setLocalDescription(await pc.createOffer())
+              let offer = await pc.createOffer();
+              const codecToFirst = (sdp, codec)=> {
+                const reg=/a=rtpmap:(\d+) (.*)\//;
+                const h264ids = sdp.match(/a=rtpmap:(\d+) (.*)\//g)
+                  .map(o=>o.match(reg).splice(1,2))
+                  .filter(o=>o[1]===codec)
+                  .map(o=>o[0]);
+                return sdp.replace(/(m=video.*[A-Z\/]+ )([0-9 ]+)/,
+                  '$1'+sdp.match(/m=video.*[A-Z\/]+ ([0-9 ]+)/)[1].split(' ')
+                    .reduce((p,n)=>h264ids.some(h=>h===n) ? [n].concat(p) : p.concat(n), [])
+                    .join(" ")
+                );
+              };
+              offer.sdp = codecToFirst(offer.sdp, "H264");
+              await pc.setLocalDescription(offer);
               console.log('localDescription', pc.localDescription)
               sendStream.push({
                 topic: 'sendCreateOffer',
