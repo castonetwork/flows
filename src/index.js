@@ -20,9 +20,14 @@ const onAirFormElement = document.getElementById('onAirForm');
 pull(
   networkReadyNotify.listen(),
   pull.drain(networkStatus => {
-    onAirFormElement.setAttribute('data-status', networkStatus && 'connected' || 'connecting');
+    if (networkStatus) {
+      onAirFormElement.setAttribute('data-status', 'connected');
+    } else {
+      onAirFormElement.setAttribute('data-status', 'connecting');
+
+    }
   }),
-)
+);
 
 /* a snapshot from the video element */
 const getSnapshot = ()=>{
@@ -43,10 +48,16 @@ const onAirFormSubmit = e => {
     alert('please enter a title of stream')
   } else {
     onAirFormStream(true);
-    titleDOM.setAttribute('disabled', true)
   }
   
 }
+pull(
+  onAirFormStream.listen(),
+  pull.drain(o => {
+    const titleDOM = document.getElementById('title');
+    o && titleDOM.setAttribute('disabled', true) || titleDOM.removeAttribute('disabled')
+  })
+);
 
 const domReady = () => {
   console.log('DOM ready')
@@ -128,8 +139,9 @@ const initApp = async () => {
   /* peerConnection */
   const options = {sdpSemantics: 'unified-plan'};
 
-  let pc;
+
   const onHandle = option => (protocol, conn) => {
+    let pc;
     let sendStream = Pushable();
     pull(sendStream,
       pull.map(o => JSON.stringify(o)),
@@ -203,6 +215,11 @@ const initApp = async () => {
                   topic: "updateStreamerSnapshot",
                   snapshot: getSnapshot()
                 })
+              }else if(pc.iceConnectionState === 'disconnected') {
+                pc.getTransceivers().forEach(transceiver => transceiver.direction = 'inactive');
+                pc.close();
+              }else if(pc.iceConnectionState === 'failed'){
+
               }
             }
 
@@ -210,13 +227,15 @@ const initApp = async () => {
             pc.onnegotiationneeded = () => {
             }
             // get a local stream, show it in a self-view and add it to be sent
-            const stream = await navigator.mediaDevices.getUserMedia({
-              audio: true,
-              video: true,
-            });
-            stream.getTracks().forEach(track => pc.addTransceiver(track, {direction: 'sendonly'}));
+            const studioVideo = document.getElementById('studio_video');
+            if(!studioVideo.srcObject){
+              studioVideo.srcObject = await navigator.mediaDevices.getUserMedia({
+                audio: true,
+                video: true,
+              });
+            }
+            studioVideo.srcObject.getTracks().forEach(track => pc.addTransceiver(track, {direction: 'sendonly'}));
 
-            document.getElementById('studio_video').srcObject = stream
             try {
               let offer = await pc.createOffer();
               const codecToFirst = (sdp, codec)=> {
@@ -257,7 +276,7 @@ const initApp = async () => {
   })
   node.on('peer:disconnect', peerInfo => {
     console.log('peer disconnected:', peerInfo.id.toB58String())
-    if (peerInfo.id.toB58String()===connectedPrismPeerId) {
+    if (peerInfo.id.toB58String() === connectedPrismPeerId) {
       networkReadyNotify(false);
       connectedPrismPeerId = null;
     }

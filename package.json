@@ -28,6 +28,7 @@
     "pull-pushable": "^2.2.0",
     "pull-stream": "^3.6.9",
     "pull-stringify": "^2.0.0",
+    "pull-with-latest": "^3.0.1",
     "setimmediate": "^1.0.5",
     "webrtc-adapter": "^7.1.1"
   },
