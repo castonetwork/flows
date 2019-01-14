@@ -30,13 +30,13 @@ pull(
 );
 
 /* a snapshot from the video element */
-const getSnapshot = ()=>{
+const getSnapshot = () => {
   let canvas = document.createElement("canvas");
   let video = document.getElementById("studio_video");
   canvas.width = video.videoWidth / 4;
   canvas.height = video.videoHeight / 4;
   let ctx = canvas.getContext('2d');
-  ctx.drawImage(video, 0,0, video.videoWidth, video.videoHeight, 0,0, canvas.width, canvas.height);
+  ctx.drawImage(video, 0, 0, video.videoWidth, video.videoHeight, 0, 0, canvas.width, canvas.height);
   return canvas.toDataURL();
 }
 
@@ -49,7 +49,6 @@ const onAirFormSubmit = e => {
   } else {
     onAirFormStream(true);
   }
-  
 }
 pull(
   onAirFormStream.listen(),
@@ -61,8 +60,7 @@ pull(
 
 const domReady = () => {
   console.log('DOM ready')
-  document.getElementById('onAirForm').
-    addEventListener('submit', onAirFormSubmit)
+  document.getElementById('onAirForm').addEventListener('submit', onAirFormSubmit)
 }
 
 let profile = {}
@@ -81,38 +79,37 @@ const initSetup = () => {
     const setAvatarId = id =>
       Array.from(avatarElements).forEach(o => o.setAttribute('data-id', id))
     setAvatarId(randomAvatarId)
-    document.querySelectorAll('.card>.thumbnails>dd').
-      forEach(o => o.addEventListener('click', e => {
+    document.querySelectorAll('.card>.thumbnails>dd')
+      .forEach(o => o.addEventListener('click', e => {
         setAvatarId(e.currentTarget.getAttribute('data-id'))
-      }))
-    document.getElementById('userInfoForm').
-      addEventListener('submit', async e => {
-        e.preventDefault();
-        const nickName = document.getElementById('nickName').value
-        if (document.getElementById('nickName').value) {
-          const {body} = await fetch(
-            getComputedStyle(document.getElementsByClassName('avatar')[0]).
-              backgroundImage.
-              replace(/url\("(.*)"\)/g, '$1'),
-          )
-          const response = await new Response(body)
-          const blob = await response.blob()
-          const dataURI = await new Promise((resolve, reject) => {
-            const r = new FileReader()
-            r.onload = e => resolve(e.target.result)
-            r.readAsDataURL(blob)
-          })
-          localStorage.setItem('profile', JSON.stringify({
-            'avatar': {
-              'image': dataURI.replace("application/octet-stream", "image/svg+xml"),
-            },
-            nickName,
-          }))
-          profile = getProfile()
-          gotoStudio()
-        }
-        e.preventDefault()
-      })
+    }))
+    document.getElementById('userInfoForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      const nickName = document.getElementById('nickName').value
+      if (document.getElementById('nickName').value) {
+        const {body} = await fetch(
+          getComputedStyle(
+            document.getElementsByClassName('avatar')[0]).backgroundImage.replace(/url\("(.*)"\)/g,
+            '$1'),
+        )
+        const response = await new Response(body)
+        const blob = await response.blob()
+        const dataURI = await new Promise((resolve, reject) => {
+          const r = new FileReader()
+          r.onload = e => resolve(e.target.result)
+          r.readAsDataURL(blob)
+        })
+        localStorage.setItem('profile', JSON.stringify({
+          'avatar': {
+            'image': dataURI.replace("application/octet-stream", "image/svg+xml"),
+          },
+          nickName,
+        }))
+        profile = getProfile()
+        gotoStudio()
+      }
+      e.preventDefault()
+    })
   } else {
     profile = getProfile()
     document.body.setAttribute('data-scene', 'studio')
@@ -153,30 +150,30 @@ const initApp = async () => {
             console.log('controller answered', sdp)
             await pc.setRemoteDescription(sdp)
           },
-          "sendTrickleCandidate": ({ice})=> {
+          "sendTrickleCandidate": ({ice}) => {
             console.log("received iceCandidate", ice);
             pc.addIceCandidate(ice);
           },
           "requestStreamerInfo": ({peerId}) => {
-            if(connectedPrismPeerId){
+            if (connectedPrismPeerId) {
               sendStream.push({
                 topic: "deniedStreamInfo",
               });
               //TODO: pull.end
               sendStream.end();
-            }else{// isNull
+            } else { // isNull
               connectedPrismPeerId = peerId;
               sendStream.push({
                 topic: "setupStreamInfo",
               });
             }
           },
-          'deniedSetupStreamInfo': ()=>{
+          'deniedSetupStreamInfo': () => {
             connectedPrismPeerId = null;
             //TODO: pull.end
             sendStream.end();
           },
-          'readyToCast': ()=>{
+          'readyToCast': () => {
             networkReadyNotify(true);
             console.log("connectedPrismPeerId : ", connectedPrismPeerId);
             document.getElementById("currentPrismPeerId").textContent = `currentPrismPeerId : ${connectedPrismPeerId}`
@@ -187,12 +184,12 @@ const initApp = async () => {
     )
     /* build a createOfferStream */
     pull(
-       CombineLatest([onAirFormStream.listen(), networkReadyNotify.listen()]),
+      CombineLatest([onAirFormStream.listen(), networkReadyNotify.listen()]),
       pull.drain(async o => {
         console.log('combineLatest', o)
         if (o[1]) {
           try {
-            pc = new RTCPeerConnection( { ...configuration, ...options } );
+            pc = new RTCPeerConnection({...configuration, ...options});
             // send any ice candidates to the other peer
             pc.onicecandidate = event => {
               console.log('[ICE]', event)
@@ -215,10 +212,10 @@ const initApp = async () => {
                   topic: "updateStreamerSnapshot",
                   snapshot: getSnapshot()
                 })
-              }else if(pc.iceConnectionState === 'disconnected') {
+              } else if (pc.iceConnectionState === 'disconnected') {
                 pc.getTransceivers().forEach(transceiver => transceiver.direction = 'inactive');
                 pc.close();
-              }else if(pc.iceConnectionState === 'failed'){
+              } else if (pc.iceConnectionState === 'failed') {
 
               }
             }
@@ -228,7 +225,7 @@ const initApp = async () => {
             }
             // get a local stream, show it in a self-view and add it to be sent
             const studioVideo = document.getElementById('studio_video');
-            if(!studioVideo.srcObject){
+            if (!studioVideo.srcObject) {
               studioVideo.srcObject = await navigator.mediaDevices.getUserMedia({
                 audio: true,
                 video: true,
@@ -238,7 +235,7 @@ const initApp = async () => {
 
             try {
               let offer = await pc.createOffer();
-              const codecToFirst = (sdp, codec)=> {
+              const codecToFirst = (sdp, codec) => {
                 const regCodecs = /a=rtpmap:(\d+) (.*)\//;
                 const regVideos = /(m=video.*[A-Z\/]+ )([0-9 ]+)/;
                 const h264ids = sdp.match(/a=rtpmap:(\d+) (.*)\//g)
