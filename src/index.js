@@ -136,7 +136,14 @@ const initApp = async () => {
   /* peerConnection */
   const options = {sdpSemantics: 'unified-plan'};
 
-
+  let geoPosition;
+  try{
+    geoPosition = await new Promise((resolve, reject)=>{
+      navigator.geolocation.getCurrentPosition(resolve, reject);
+    });
+  }catch(e){
+    console.error(e);
+  }
   const onHandle = option => (protocol, conn) => {
     let pc;
     let sendStream = Pushable();
@@ -164,7 +171,7 @@ const initApp = async () => {
             } else { // isNull
               connectedPrismPeerId = peerId;
               sendStream.push({
-                topic: "setupStreamInfo",
+                topic: "setupStreamInfo"
               });
             }
           },
@@ -207,6 +214,10 @@ const initApp = async () => {
                   topic: 'updateStreamerInfo',
                   profile: JSON.parse(localStorage.getItem('profile')),
                   title: document.getElementById('title').value,
+                  geoInfo : {
+                    latitude: geoPosition.coords.latitude,
+                    longitude: geoPosition.coords.longitude,
+                  }
                 })
                 sendStream.push({
                   topic: "updateStreamerSnapshot",
