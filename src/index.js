@@ -136,7 +136,9 @@ const initApp = async () => {
   /* peerConnection */
   const options = {sdpSemantics: 'unified-plan'};
 
-  let geoPosition;
+  let geoPosition ={
+    coords: {}
+  };
   try{
     geoPosition = await new Promise((resolve, reject)=>{
       navigator.geolocation.getCurrentPosition(resolve, reject);
@@ -214,7 +216,7 @@ const initApp = async () => {
                   topic: 'updateStreamerInfo',
                   profile: JSON.parse(localStorage.getItem('profile')),
                   title: document.getElementById('title').value,
-                  geoInfo : {
+                  coords : {
                     latitude: geoPosition.coords.latitude,
                     longitude: geoPosition.coords.longitude,
                   }
