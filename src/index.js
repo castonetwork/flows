@@ -121,6 +121,7 @@ const configuration = {
   iceServers: [{urls: 'stun:stun.l.google.com:19302'}]
 };
 
+let geoPosition ={};
 const initApp = async () => {
   console.log('init app')
   initSetup()
@@ -136,9 +137,6 @@ const initApp = async () => {
   /* peerConnection */
   const options = {sdpSemantics: 'unified-plan'};
 
-  let geoPosition ={
-    coords: {}
-  };
   try{
     geoPosition = await new Promise((resolve, reject)=>{
       navigator.geolocation.getCurrentPosition(resolve, reject);
@@ -212,15 +210,17 @@ const initApp = async () => {
             pc.oniceconnectionstatechange = () => {
               console.log('[ICE STATUS] ', pc.iceConnectionState)
               if (pc.iceConnectionState === 'connected') {
-                sendStream.push({
+                let updatedStreamerInfoData = {
                   topic: 'updateStreamerInfo',
                   profile: JSON.parse(localStorage.getItem('profile')),
                   title: document.getElementById('title').value,
-                  coords : {
+                };
+                updatedStreamerInfoData.coords = geoPosition.coords ? {
                     latitude: geoPosition.coords.latitude,
                     longitude: geoPosition.coords.longitude,
-                  }
-                })
+                  } : undefined;
+
+                sendStream.push(updatedStreamerInfoData);
                 sendStream.push({
                   topic: "updateStreamerSnapshot",
                   snapshot: getSnapshot()
