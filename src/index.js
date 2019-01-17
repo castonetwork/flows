@@ -7,6 +7,16 @@ const Pushable = require('pull-pushable')
 const Notify = require('pull-notify')
 const createNode = require('./create-node')
 
+const isDemo = new URL(location.href).searchParams.get('demoMode');
+let serviceId = new URL(location.href).searchParams.get('serviceId');
+
+if(isDemo && !serviceId){
+  let redirectURL = new URL(location.origin);
+  redirectURL.searchParams.set("demoMode","true");
+  redirectURL.searchParams.set("serviceId", "DEMO_"+parseInt(Math.random()* 100000));
+  window.location.replace(redirectURL.toString());
+}
+
 /* UI Stream */
 const onAirFormStream = Notify()
 onAirFormStream(false);
@@ -14,7 +24,6 @@ onAirFormStream(false);
 const networkReadyNotify = Notify()
 networkReadyNotify(false);
 
-let serviceId;
 /* watch network Ready Status */
 const onAirFormElement = document.getElementById('onAirForm');
 pull(
@@ -129,8 +138,6 @@ const initApp = async () => {
   const node = await createNode()
   console.log('node created')
   console.log('node is ready', node.peerInfo.id.toB58String())
-
-  serviceId = new URL(location.href).searchParams.get('serviceId');
 
   document.getElementById("myPeerId").textContent = `my Peer Id : ${node.peerInfo.id.toB58String()}`
   let connectedPrismPeerId = null;
