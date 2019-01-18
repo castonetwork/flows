@@ -272,7 +272,7 @@ const initApp = async () => {
               await pc.setLocalDescription(offer);
               console.log('localDescription', pc.localDescription)
               sendStream.push({
-                topic: 'sendCreateOffer',
+                topic: 'sendCreatedOffer',
                 sdp: pc.localDescription,
               })
             } catch (err) {
