@@ -178,8 +178,14 @@ const initApp = async () => {
               sendStream.end();
             } else { // isNull
               connectedPrismPeerId = peerId;
+              let coords = geoPosition.coords ? {
+                latitude: geoPosition.coords.latitude,
+                longitude: geoPosition.coords.longitude,
+              } : undefined;
+
               sendStream.push({
-                topic: "setupStreamInfo"
+                topic: "setupStreamInfo",
+                coords
               });
             }
           },
@@ -223,10 +229,6 @@ const initApp = async () => {
                   profile: JSON.parse(localStorage.getItem('profile')),
                   title: document.getElementById('title').value,
                 };
-                updatedStreamerInfoData.coords = geoPosition.coords ? {
-                    latitude: geoPosition.coords.latitude,
-                    longitude: geoPosition.coords.longitude,
-                  } : undefined;
 
                 sendStream.push(updatedStreamerInfoData);
                 sendStream.push({
