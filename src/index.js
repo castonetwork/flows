@@ -10,6 +10,8 @@ const createNode = require('./create-node')
 const isDemo = new URL(location.href).searchParams.get('demoMode');
 let serviceId = new URL(location.href).searchParams.get('serviceId');
 
+
+
 if(isDemo && !serviceId){
   let redirectURL = new URL(location.origin);
   redirectURL.searchParams.set("demoMode","true");
@@ -139,18 +141,17 @@ const initApp = async () => {
   console.log('node created')
   console.log('node is ready', node.peerInfo.id.toB58String())
 
+  let longitude = parseFloat(new URL(location.href).searchParams.get('lng'));
+  let latitude = parseFloat(new URL(location.href).searchParams.get('lat'));
+
+  geoPosition.coords = !isNaN(latitude) && !isNaN(longitude) && {longitude, latitude} || undefined;
+
+
   document.getElementById("myPeerId").textContent = `my Peer Id : ${node.peerInfo.id.toB58String()}`
   let connectedPrismPeerId = null;
   /* peerConnection */
   const options = {sdpSemantics: 'unified-plan'};
 
-  try{
-    geoPosition = await new Promise((resolve, reject)=>{
-      navigator.geolocation.getCurrentPosition(resolve, reject);
-    });
-  }catch(e){
-    console.error(e);
-  }
   const onHandle = option => (protocol, conn) => {
     let pc;
     let sendStream = Pushable();
