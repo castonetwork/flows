@@ -92,7 +92,7 @@
 		<div id="currentPrismPeerId"></div>
 	</div>
 	<div class="videoContainer">
-		<video id="studio_video" autoplay></video>
+		<video id="studio_video" autoplay height="640px" width="480px"></video>
 	</div>
 	<div id="flowInfo">
 		<form id="onAirForm" data-status="connecting">
@@ -103,6 +103,10 @@
 	<div id="viewerInfo">
 		viewers:
 		<span id="viewerCounts">0</span>
+	</div>
+	<div id="buttons">
+		<inpuy type="button" id="selectFile">File Broadcast</inpuy>
+		<input type="file" id="fileTag" multiple hidden/></div>
 	</div>
 </div>
 <script src="../src/index.js"></script>

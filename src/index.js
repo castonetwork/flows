@@ -9,33 +9,46 @@ const createNode = require('./create-node')
 
 const isDemo = new URL(location.href).searchParams.get('demoMode');
 let serviceId = new URL(location.href).searchParams.get('serviceId');
+const fileTag = document.getElementById('fileTag');
+const videoTag = document.getElementById("studio_video")
+let i = 0;
+const playFileOnVideo = ()=>{
+  videoTag.src = URL.createObjectURL(fileTag.files[0]);
+  videoTag.setAttribute("loop", true);
+  videoTag.play();
+  //videoTag.onplay = () =>{}
+};
+fileTag.onchange = e =>{
+  playFileOnVideo();
+};
 
+document.getElementById("selectFile").addEventListener('click', (e)=>{
+  fileTag.click();
+});
 
-
-if(isDemo && !serviceId){
+if(!serviceId){
   let redirectURL = new URL(location.origin);
-  redirectURL.searchParams.set("demoMode","true");
-  redirectURL.searchParams.set("serviceId", "DEMO_"+parseInt(Math.random()* 100000));
+  //redirectURL.searchParams.set("demoMode","true");
+  redirectURL.searchParams.set("serviceId", "CASTO");
   window.location.replace(redirectURL.toString());
 }
 
 /* UI Stream */
 const onAirFormStream = Notify()
-onAirFormStream(false);
+
 /* Network Stream */
 const networkReadyNotify = Notify()
-networkReadyNotify(false);
 
 /* watch network Ready Status */
 const onAirFormElement = document.getElementById('onAirForm');
 pull(
   networkReadyNotify.listen(),
   pull.drain(networkStatus => {
+    console.log("networkReadyNotify "+ networkStatus)
     if (networkStatus) {
       onAirFormElement.setAttribute('data-status', 'connected');
     } else {
       onAirFormElement.setAttribute('data-status', 'connecting');
-
     }
   }),
 );
@@ -68,6 +81,12 @@ pull(
     o && titleDOM.setAttribute('disabled', true) || titleDOM.removeAttribute('disabled')
   })
 );
+// pull(
+//   CombineLatest([onAirFormStream.listen(), networkReadyNotify.listen()]),
+//   pull.drain( o=>{
+//     console.log(o);
+//   })
+// )
 
 const domReady = () => {
   console.log('DOM ready')
@@ -248,13 +267,26 @@ const initApp = async () => {
             }
             // get a local stream, show it in a self-view and add it to be sent
             const studioVideo = document.getElementById('studio_video');
-            if (!studioVideo.srcObject) {
+
+            if(studioVideo.src ==="" && !studioVideo.srcObject ){
               studioVideo.srcObject = await navigator.mediaDevices.getUserMedia({
                 audio: true,
                 video: true,
               });
             }
-            studioVideo.srcObject.getTracks().forEach(track => pc.addTransceiver(track, {direction: 'sendonly'}));
+            else if (studioVideo.src !=="") {
+              if (studioVideo.captureStream) {
+                Array.from(studioVideo.captureStream().getTracks()).forEach(track =>
+                  pc.addTransceiver(track.kind).sender.replaceTrack(track));
+              }else if(studioVideo.mozCaptureStream){
+                Array.from(studioVideo.mozCaptureStream().getTracks()).forEach(track =>
+                  pc.addTransceiver(track.kind).sender.replaceTrack(track));
+              }else{
+                alert('This browser cannot support file streaming to the CASTO.');
+                return;
+              }
+            }
+            studioVideo.srcObject && studioVideo.srcObject.getTracks().forEach(track => pc.addTransceiver(track, {direction: 'sendonly'}));
 
             try {
               let offer = await pc.createOffer();
@@ -308,6 +340,9 @@ const initApp = async () => {
     }
     console.log(node.peerInfo.multiaddrs.toArray().map(o => o.toString()))
   })
+
+  onAirFormStream(false);
+  networkReadyNotify(false);
 }
 
 initApp()

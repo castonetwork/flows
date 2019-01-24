@@ -176,3 +176,12 @@ span.title, input#title {
   word-break: break-word;
   width: 100%;
 }
+
+#buttons{
+  position: absolute;
+  right: 1em;
+  bottom: 1em;
+}
+#buttons button{
+  background-color: #8f5cd6;
+}
