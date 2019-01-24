@@ -174,6 +174,7 @@ const initApp = async () => {
   const onHandle = option => (protocol, conn) => {
     let pc;
     let sendStream = Pushable();
+    let handlePeerId;
     pull(sendStream,
       pull.map(o => JSON.stringify(o)),
       conn,
@@ -215,6 +216,7 @@ const initApp = async () => {
           },
           'readyToCast': () => {
             networkReadyNotify(true);
+            handlePeerId = connectedPrismPeerId;
             console.log("connectedPrismPeerId : ", connectedPrismPeerId);
             document.getElementById("currentPrismPeerId").textContent = `currentPrismPeerId : ${connectedPrismPeerId}`
           }
@@ -227,7 +229,7 @@ const initApp = async () => {
       CombineLatest([onAirFormStream.listen(), networkReadyNotify.listen()]),
       pull.drain(async o => {
         console.log('combineLatest', o)
-        if (o[1]) {
+        if (o[1] && handlePeerId ) {
           try {
             pc = new RTCPeerConnection({...configuration, ...options});
             // send any ice candidates to the other peer
