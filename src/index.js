@@ -7,7 +7,6 @@ const Pushable = require('pull-pushable')
 const Notify = require('pull-notify')
 const createNode = require('./create-node')
 
-const isDemo = new URL(location.href).searchParams.get('demoMode');
 let serviceId = new URL(location.href).searchParams.get('serviceId');
 const fileTag = document.getElementById('fileTag');
 const videoTag = document.getElementById("studio_video")
@@ -151,8 +150,8 @@ const configuration = {
   iceServers: [{urls: 'stun:stun.l.google.com:19302'}]
 };
 
-let geoPosition ={};
 const initApp = async () => {
+  let geoPosition = await ((await fetch("https://extreme-ip-lookup.com/json/")).json());
   console.log('init app')
   initSetup()
   domReady()
@@ -160,8 +159,8 @@ const initApp = async () => {
   console.log('node created')
   console.log('node is ready', node.peerInfo.id.toB58String())
 
-  let longitude = parseFloat(new URL(location.href).searchParams.get('lng'));
-  let latitude = parseFloat(new URL(location.href).searchParams.get('lat'));
+  let longitude = parseFloat(geoPosition.lon);
+  let latitude = parseFloat(geoPosition.lat);
 
   geoPosition.coords = !isNaN(latitude) && !isNaN(longitude) && {longitude, latitude} || undefined;
 
