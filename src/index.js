@@ -134,6 +134,7 @@ const configuration = {
 
 let geoPosition ={};
 const initApp = async () => {
+  let geoPosition = await ((await fetch("https://extreme-ip-lookup.com/json/")).json());
   console.log('init app')
   initSetup()
   domReady()
@@ -141,8 +142,8 @@ const initApp = async () => {
   console.log('node created')
   console.log('node is ready', node.peerInfo.id.toB58String())
 
-  let longitude = parseFloat(new URL(location.href).searchParams.get('lng'));
-  let latitude = parseFloat(new URL(location.href).searchParams.get('lat'));
+  let longitude = parseFloat(geoPosition.lon);
+  let latitude = parseFloat(geoPosition.lat);
 
   geoPosition.coords = !isNaN(latitude) && !isNaN(longitude) && {longitude, latitude} || undefined;
 
