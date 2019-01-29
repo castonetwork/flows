@@ -248,7 +248,9 @@ const initApp = async () => {
 
 
               } else if(pc.iceConnectionState === 'completed'){
+                document.getElementById('onAirLamp').setAttribute("onair",true);
               }else if (pc.iceConnectionState === 'disconnected') {
+                document.getElementById('onAirLamp').setAttribute("onair",false);
                 pc.getTransceivers().forEach(transceiver => transceiver.direction = 'inactive');
                 pc.close();
               } else if (pc.iceConnectionState === 'failed') {
@@ -311,6 +313,7 @@ const initApp = async () => {
     console.log('peer disconnected:', peerInfo.id.toB58String())
     if (peerInfo.id.toB58String() === connectedPrismPeerId) {
       networkReadyNotify(false);
+      document.getElementById('onAirLamp').setAttribute("onair",false);
       connectedPrismPeerId = null;
     }
   })

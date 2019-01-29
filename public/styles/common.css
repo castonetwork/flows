@@ -176,3 +176,18 @@ span.title, input#title {
   word-break: break-word;
   width: 100%;
 }
+
+#onAirLamp[onair=true]{
+  display: inline-block;
+  border: solid 2px;
+  padding: 0em 1em;
+  background-color: rgba(201, 64, 49, 0.7);
+  color: white;
+}
+#onAirLamp[onair=false]{
+  display: inline-block;
+  border: solid 2px;
+  padding: 0em 1em;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+}
