@@ -48,7 +48,8 @@ const getSnapshot = () => {
   canvas.height = video.videoHeight / 4;
   let ctx = canvas.getContext('2d');
   ctx.drawImage(video, 0, 0, video.videoWidth, video.videoHeight, 0, 0, canvas.width, canvas.height);
-  return canvas.toDataURL();
+  let snapShot = canvas.toDataURL();
+  return snapShot;
 }
 
 const onAirFormSubmit = e => {
@@ -232,11 +233,22 @@ const initApp = async () => {
                 };
 
                 sendStream.push(updatedStreamerInfoData);
-                sendStream.push({
-                  topic: "updateStreamerSnapshot",
-                  snapshot: getSnapshot()
-                })
-              } else if (pc.iceConnectionState === 'disconnected') {
+                const sendScreenShot = () => {
+                  let screenShot = getSnapshot();
+                  if(screenShot === "data:,"){
+                    setTimeout(sendScreenShot , 10000);
+                  }else{
+                    sendStream.push({
+                      topic: "updateStreamerSnapshot",
+                      snapshot: screenShot
+                    })
+                  }
+                };
+                setTimeout(sendScreenShot , 10000);
+
+
+              } else if(pc.iceConnectionState === 'completed'){
+              }else if (pc.iceConnectionState === 'disconnected') {
                 pc.getTransceivers().forEach(transceiver => transceiver.direction = 'inactive');
                 pc.close();
               } else if (pc.iceConnectionState === 'failed') {
