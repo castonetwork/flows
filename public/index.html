@@ -83,8 +83,13 @@
 	</div>
 </div>
 <div class="container" id="studio">
-	<div class="head"><span id="streamerId"></span>'s Studio</div>
-	<div class="status">
+	<div class="control">
+		<div id="exit"></div>
+	</div>
+	<div class="head txt-shadow">
+		<span id="streamerId"></span>'s Studio
+	</div>
+	<div class="status txt-shadow">
 		<div>
 			Streaming status
 			<div id="onAirLamp" onAir="false">on Air</div>
@@ -95,13 +100,13 @@
 	<div class="videoContainer">
 		<video id="studio_video" autoplay></video>
 	</div>
-	<div id="flowInfo">
-		<form id="onAirForm" data-status="connecting">
+	<div id="flowInfo"  data-status="connecting">
+		<form id="onAirForm">
       <span class="title anim-text-flow"><span>Wait</span> <span>for</span> <span>the</span> <span>peer</span> <span>conn</span><span>ecti</span><span>ons</span></span>
 			<input type="text" id="title" placeholder="Your channel name here">
 		</form>
 	</div>
-	<div id="viewerInfo">
+	<div id="viewerInfo" class="txt-shadow">
 		viewers:
 		<span id="viewerCounts">0</span>
 	</div>

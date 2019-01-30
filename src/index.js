@@ -27,15 +27,14 @@ const networkReadyNotify = Notify()
 networkReadyNotify(false);
 
 /* watch network Ready Status */
-const onAirFormElement = document.getElementById('onAirForm');
+const flowFormEle = document.getElementById('flowInfo');
 pull(
   networkReadyNotify.listen(),
   pull.drain(networkStatus => {
     if (networkStatus) {
-      onAirFormElement.setAttribute('data-status', 'connected');
+      flowFormEle.setAttribute('data-status', 'connected');
     } else {
-      onAirFormElement.setAttribute('data-status', 'connecting');
-
+      flowFormEle.setAttribute('data-status', 'connecting');
     }
   }),
 );
@@ -245,11 +244,19 @@ const initApp = async () => {
                   }
                 };
                 setTimeout(sendScreenShot , 10000);
-
-
-              } else if(pc.iceConnectionState === 'completed'){
                 document.getElementById('onAirLamp').setAttribute("onair",true);
-              }else if (pc.iceConnectionState === 'disconnected') {
+                flowFormEle.setAttribute('data-status', 'streaming');
+                let exitEle = document.getElementById('exit');
+                let exitEvent = () => {
+                  console.log('exitEvent');
+                  window.location.reload();
+                  //exitEle.removeEventListener('click',exitEvent);
+
+                }
+                exitEle.addEventListener('click',exitEvent);
+                console.log("Set event");
+              } else if(pc.iceConnectionState === 'completed'){
+              } else if (pc.iceConnectionState === 'disconnected') {
                 document.getElementById('onAirLamp').setAttribute("onair",false);
                 pc.getTransceivers().forEach(transceiver => transceiver.direction = 'inactive');
                 pc.close();
