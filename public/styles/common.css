@@ -192,7 +192,8 @@ form {
   text-align: right;
   font-size: 1.2em;
   opacity: 1;
-  margin-bottom: 0em;
+  margin-bottom: 0.3em;
+  padding-right: 0.1em;
   word-break: break-word;
   text-shadow: #000 1px 2px 3px;
   color: #FFF;

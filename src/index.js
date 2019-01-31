@@ -155,6 +155,7 @@ const initApp = async () => {
 
   const onHandle = option => (protocol, conn) => {
     let pc;
+    let peerIdOfPrismOnHandle;
     let sendStream = Pushable();
     pull(sendStream,
       pull.map(o => JSON.stringify(o)),
@@ -171,6 +172,7 @@ const initApp = async () => {
             pc.addIceCandidate(ice);
           },
           "requestStreamerInfo": ({peerId}) => {
+            peerIdOfPrismOnHandle = peerId;
             if (connectedPrismPeerId) {
               sendStream.push({
                 topic: "deniedStreamInfo",
@@ -199,7 +201,11 @@ const initApp = async () => {
             networkReadyNotify(true);
             console.log("connectedPrismPeerId : ", connectedPrismPeerId);
             document.getElementById("currentPrismPeerId").textContent = `currentPrismPeerId : ${connectedPrismPeerId}`
+          },
+          'updateWaves': ({waves})=>{
+            document.getElementById("viewerCounts").textContent = waves.length;
           }
+
         };
         controllerResponse[o.topic] && controllerResponse[o.topic](o)
       }),
@@ -209,7 +215,7 @@ const initApp = async () => {
       CombineLatest([onAirFormStream.listen(), networkReadyNotify.listen()]),
       pull.drain(async o => {
         console.log('combineLatest', o)
-        if (o[1]) {
+        if (o[1] && connectedPrismPeerId === peerIdOfPrismOnHandle) {
           try {
             pc = new RTCPeerConnection({...configuration, ...options});
             // send any ice candidates to the other peer
@@ -246,14 +252,7 @@ const initApp = async () => {
                 setTimeout(sendScreenShot , 10000);
                 document.getElementById('onAirLamp').setAttribute("onair",true);
                 flowFormEle.setAttribute('data-status', 'streaming');
-                let exitEle = document.getElementById('exit');
-                let exitEvent = () => {
-                  console.log('exitEvent');
-                  window.location.reload();
-                  //exitEle.removeEventListener('click',exitEvent);
-
-                }
-                exitEle.addEventListener('click',exitEvent);
+                document.getElementById('exit').addEventListener('click',e => window.location.reload());
                 console.log("Set event");
               } else if(pc.iceConnectionState === 'completed'){
               } else if (pc.iceConnectionState === 'disconnected') {
