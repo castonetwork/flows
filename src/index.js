@@ -203,7 +203,7 @@ const initApp = async () => {
             document.getElementById("currentPrismPeerId").textContent = `currentPrismPeerId : ${connectedPrismPeerId}`
           },
           'updateWaves': ({waves})=>{
-            document.getElementById("viewerCounts").textContent = waves.length;
+            document.getElementById("viewerCounts").textContent = Object.entries(waves).length;
           }
 
         };
